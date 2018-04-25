@@ -2,8 +2,17 @@ import Ember from 'ember';
 import FactoryGuy from './factory-guy';
 import Sequence from './sequence';
 import MissingSequenceError from './missing-sequence-error';
-import { isEmptyObject, mergeDeep } from './utils/helper-functions';
+import {isEmptyObject, mergeDeep} from './utils/helper-functions';
+import require from 'require';
 import { assign } from '@ember/polyfills';
+
+let Fragment;
+try {
+  let MF = require('ember-data-model-fragments');
+  Fragment = MF && MF.default.Fragment;
+} catch (e) {
+  // do nothing
+}
 
 /**
  A ModelDefinition encapsulates a model's definition
@@ -31,6 +40,19 @@ class ModelDefinition {
     let modelClass = FactoryGuy.store.modelFor(this.modelName);
     let relationship = Ember.get(modelClass, 'relationshipsByName').get(field);
     return relationship || null;
+  }
+
+  /**
+   Is this model a fragment type
+
+   @returns {Boolean} true if it's a model fragment
+   */
+  isModelAFragment() {
+    if (Fragment) {
+      let type = FactoryGuy.store.modelFor(this.modelName);
+      return Fragment.detect(type);
+    }
+    return false;
   }
 
   /**
@@ -120,9 +142,9 @@ class ModelDefinition {
    @param {String} traitArgs array of traits
    @returns {Object} json
    */
-  build(name, opts, traitArgs = [], buildType = 'build') {
+  build(name, opts, traitArgs) {
     let traitsObj = {};
-    traitArgs.forEach(trait => {
+    traitArgs.forEach((trait) => {
       Ember.assert(`You're trying to use a trait [${trait}] for model ${this.modelName} but that trait can't be found.`, this.traits[trait]);
       assign(traitsObj, this.traits[trait]);
     });
@@ -147,9 +169,9 @@ class ModelDefinition {
       for (let attribute in fixture) {
         let attributeType = Ember.typeOf(fixture[attribute]);
         if (attributeType === 'function') {
-          this.addFunctionAttribute(fixture, attribute, buildType);
+          this.addFunctionAttribute(fixture, attribute);
         } else if (attributeType === 'object') {
-          this.addObjectAttribute(fixture, attribute, buildType);
+          this.addObjectAttribute(fixture, attribute);
         }
       }
     } catch (e) {
@@ -159,7 +181,7 @@ class ModelDefinition {
       throw e;
     }
 
-    if (FactoryGuy.isModelAFragment(this.modelName)) {
+    if (this.isModelAFragment()) {
       delete fixture.id;
     }
     delete fixture._generatedId;
@@ -167,12 +189,11 @@ class ModelDefinition {
   }
 
   // function might be a sequence, an inline attribute function or an association
-  addFunctionAttribute(fixture, attribute, buildType) {
-//    console.log(`addFunctionAttribute fixture[${attribute}]`,fixture[attribute]);
-    fixture[attribute] = fixture[attribute].call(this, fixture, buildType);
+  addFunctionAttribute(fixture, attribute) {
+    fixture[attribute] = fixture[attribute].call(this, fixture);
   }
 
-  addObjectAttribute(fixture, attribute, buildType) {
+  addObjectAttribute(fixture, attribute) {
     // If it's an object and it's a model association attribute, build the json
     // for the association and replace the attribute with that json
     let relationship = this.getRelationship(attribute);
@@ -182,7 +203,7 @@ class ModelDefinition {
       if (isEmptyObject(payload)) {
         // make a payload, but make sure it's the correct fragment type
         let actualType = this.fragmentType(attribute);
-        payload = FactoryGuy.buildRaw({name: actualType, opts: {}, buildType});
+        payload = FactoryGuy.buildRaw(actualType, {});
       }
       // use the payload you have been given
       fixture[attribute] = payload;
@@ -190,7 +211,7 @@ class ModelDefinition {
     if (relationship) {
       let payload = fixture[attribute];
       if (!payload.isProxy) {
-        fixture[attribute] = FactoryGuy.buildRaw({name: relationship.type, opts: payload, buildType});
+        fixture[attribute] = FactoryGuy.buildRaw(relationship.type, payload);
       }
     }
   }
@@ -204,8 +225,12 @@ class ModelDefinition {
    @param {Object} opts attribute options
    @returns array of fixtures
    */
-  buildList(name, number, traits, opts, buildType) {
-    return Array(number).fill().map(()=>this.build(name, opts, traits, buildType));
+  buildList(name, number, traits, opts) {
+    let arr = [];
+    for (let i = 0; i < number; i++) {
+      arr.push(this.build(name, opts, traits));
+    }
+    return arr;
   }
 
   // Set the modelId back to 1, and reset the sequences

@@ -3,19 +3,9 @@ import DS from 'ember-data';
 import ModelDefinition from './model-definition';
 import FixtureBuilderFactory from './builder/fixture-builder-factory';
 import RequestManager from './mocks/request-manager';
-import require from 'require';
 import { assign } from '@ember/polyfills';
 
 let modelDefinitions = {};
-
-let Fragment;
-try {
-  let MF = require('ember-data-model-fragments');
-  Fragment = MF && MF.default.Fragment;
-} catch (e) {
-  // do nothing
-}
-
 
 class FactoryGuy {
   /**
@@ -48,19 +38,6 @@ class FactoryGuy {
 
   updateHTTPMethod(modelName) {
     return this.fixtureBuilder(modelName).updateHTTPMethod || 'PUT';
-  }
-
-  /**
-   Is this model a fragment type
-
-   @returns {Boolean} true if it's a model fragment
-   */
-  isModelAFragment(modelName) {
-    if (Fragment) {
-      let type = this.store.modelFor(modelName);
-      return Fragment.detect(type);
-    }
-    return false;
   }
 
   /**
@@ -176,20 +153,12 @@ class FactoryGuy {
      })
    ```
 
-   @param {String} name  fixture name
-   @param {String} trait  optional trait names ( one or more )
-   @param {Object} opts  optional fixture options that will override default fixture values
+   @param   {String} fixtureName fixture name
+   @param   {Object} opts options
    @returns {Function} wrapper function that will build the association json
    */
-  belongsTo(...originalArgs) {
-    let args = FactoryGuy.extractArguments(...originalArgs);
-    return (fixture, buildType) => {
-      let modelName = FactoryGuy.lookupModelForFixtureName(args.name);
-      if (this.isModelAFragment(modelName) && buildType === 'build') {
-        return this.build(...originalArgs).get();
-      }
-      return this.buildRaw({...args, buildType});
-    }
+  belongsTo(fixtureName, opts) {
+    return () => this.buildRaw(fixtureName, opts);
   }
 
   /**
@@ -215,21 +184,13 @@ class FactoryGuy {
 
    ```
 
-   @param {String} fixtureName fixture name
-   @param {Number} number optional number of hasMany association items to build
-   @param {String} trait optional trait names ( one or more )
-   @param {Object} opts options
+   @param   {String} fixtureName fixture name
+   @param   {Number} number of hasMany association items to build
+   @param   {Object} opts options
    @returns {Function} wrapper function that will build the association json
    */
-  hasMany(...originalArgs) {
-    let args = FactoryGuy.extractListArguments(...originalArgs);
-    return (fixture, buildType) => {
-      let modelName = FactoryGuy.lookupModelForFixtureName(args.name);
-      if (this.isModelAFragment(modelName) && buildType === 'build') {
-        return this.buildList(...originalArgs).get();
-      }
-      return this.buildRawList({...args, buildType});
-    }
+  hasMany(...args) {
+    return () => this.buildRawList(...args);
   }
 
   /**
@@ -254,19 +215,21 @@ class FactoryGuy {
    */
   build(...originalArgs) {
     let args      = FactoryGuy.extractArguments(...originalArgs),
-        modelName = FactoryGuy.lookupModelForFixtureName(args.name),
-        fixture   = this.buildRaw({...args, buildType: 'build'});
+        fixture   = this.buildRaw(...originalArgs),
+        modelName = FactoryGuy.lookupModelForFixtureName(args.name);
 
     return this.fixtureBuilder(modelName).convertForBuild(modelName, fixture);
   }
 
-  buildRaw({name, opts, traits, buildType = 'build'} = {}) {
-    let definition = FactoryGuy.lookupDefinitionForFixtureName(name);
+  buildRaw(...args) {
+    args = FactoryGuy.extractArguments(...args);
+
+    let definition = FactoryGuy.lookupDefinitionForFixtureName(args.name);
     if (!definition) {
-      throw new Error(`[ember-data-factory-guy] Can't find that factory named [ ${name} ]`);
+      throw new Error('Can\'t find that factory named [' + args.name + ']');
     }
 
-    return definition.build(name, opts, traits, buildType);
+    return definition.build(args.name, args.opts, args.traits);
   }
 
   /**
@@ -284,45 +247,49 @@ class FactoryGuy {
    ```
 
    @param {String} name  fixture name
-   @param {Number} number optional number of fixtures to build
+   @param {Number} number  number of fixtures to create
    @param {String} trait  optional traits (one or more)
    @param {Object} opts  optional fixture options that will override default fixture values
    @returns {Array} list of fixtures
    */
   buildList(...args) {
-    this.ensureNameInArguments('buildList', args);
+    Ember.assert(
+      "buildList needs at least a name ( of model or named factory definition )",
+      args.length > 0
+    );
 
-    args = FactoryGuy.extractListArguments(...args);
-
-    let list      = this.buildRawList({...args, buildType: 'build'}),
-        modelName = FactoryGuy.lookupModelForFixtureName(args.name);
+    let list      = this.buildRawList(...args),
+        name      = args.shift(),
+        modelName = FactoryGuy.lookupModelForFixtureName(name);
 
     return this.fixtureBuilder(modelName).convertForBuild(modelName, list);
   }
 
-  buildRawList({name, number, opts, buildType = 'build'} = {}) {
-    let definition = FactoryGuy.lookupDefinitionForFixtureName(name);
+  buildRawList(...args) {
+    let name       = args.shift(),
+        definition = FactoryGuy.lookupDefinitionForFixtureName(name);
     if (!definition) {
-      throw new Error(`[ember-data-factory-guy] Can't find that factory named [ ${name} ]`);
+      throw new Error("Can't find that factory named [" + name + "]");
     }
-
-    if (number) {
-      let parts = FactoryGuy.extractArgumentsShort(...opts);
-      return definition.buildList(name, number, parts.traits, parts.opts, buildType);
+    let number = args[0] || 0;
+    if (typeof number === 'number') {
+      args.shift();
+      let parts = FactoryGuy.extractArgumentsShort(...args);
+      return definition.buildList(name, number, parts.traits, parts.opts);
     }
-
-    return opts.map(function(innerArgs) {
-      if (Ember.typeOf(innerArgs) !== 'array') {
-        innerArgs = [innerArgs];
-      }
-      let parts = FactoryGuy.extractArgumentsShort(...innerArgs);
-      return definition.build(name, parts.opts, parts.traits, buildType);
-    });
+    else {
+      return args.map(function(innerArgs) {
+        if (Ember.typeOf(innerArgs) !== 'array') {
+          innerArgs = [innerArgs];
+        }
+        let parts = FactoryGuy.extractArgumentsShort(...innerArgs);
+        return definition.build(name, parts.opts, parts.traits);
+      });
+    }
   }
 
   /**
    Make new model and save to store.
-   If the model type is a fragment, return the raw fixture
 
    @param {String} name  fixture name
    @param {String} trait  optional trait names ( one or more )
@@ -330,17 +297,17 @@ class FactoryGuy {
    @returns {DS.Model} record
    */
   make(...originalArgs) {
-    this.ensureStore();
+    let args = FactoryGuy.extractArguments(...originalArgs);
 
-    let args      = FactoryGuy.extractArguments(...originalArgs),
-        modelName = FactoryGuy.lookupModelForFixtureName(args.name),
-        fixture   = this.buildRaw({...args, buildType: 'make'});
+    Ember.assert(
+      `FactoryGuy does not have the application's store.
+       Use manualSetup(this.container) in model/component test
+       before using make/makeList`, this.store
+    );
 
-    if (this.isModelAFragment(modelName)) {
-      return fixture;
-    }
-
-    let data       = this.fixtureBuilder(modelName).convertForMake(modelName, fixture),
+    let modelName  = FactoryGuy.lookupModelForFixtureName(args.name),
+        fixture    = this.buildRaw(...originalArgs),
+        data       = this.fixtureBuilder(modelName).convertForMake(modelName, fixture),
         model      = Ember.run(() => this.store.push(data)),
         definition = FactoryGuy.lookupDefinitionForFixtureName(args.name);
 
@@ -359,12 +326,16 @@ class FactoryGuy {
    @returns {DS.Model} record
    */
   makeNew(...originalArgs) {
-    this.ensureStore();
+    let args = FactoryGuy.extractArguments(...originalArgs);
 
-    let args      = FactoryGuy.extractArguments(...originalArgs),
-        modelName = FactoryGuy.lookupModelForFixtureName(args.name),
-        fixture   = this.buildRaw({...args, buildType: 'make'});
+    Ember.assert(
+      `FactoryGuy does not have the application's store.
+       Use manualSetup(this.container) in model/component test
+       before using makeNew`, this.store
+    );
 
+    let modelName = FactoryGuy.lookupModelForFixtureName(args.name),
+        fixture   = this.buildRaw(...originalArgs);
     delete fixture.id;
 
     let data = this.fixtureBuilder(modelName).convertForBuild(modelName, fixture, {transformKeys: false});
@@ -389,50 +360,40 @@ class FactoryGuy {
    ```
 
    @param {String} name name of fixture
-   @param {Number} number optional number of models to build
+   @param {Number} number number to create
    @param {String} trait  optional trait names ( one or more )
    @param {Object} options  optional fixture options that will override default fixture values
    @returns {Array} list of json fixtures or records depending on the adapter type
    */
   makeList(...args) {
-    this.ensureStore();
-    this.ensureNameInArguments('makeList', args);
-
-    let {name, number, opts} = FactoryGuy.extractListArguments(...args);
-
-    let definition = FactoryGuy.lookupDefinitionForFixtureName(name);
-
     Ember.assert(
-      `[ember-data-factory-guy] makeList can't find that factory named [ ${name} ]`,
-      !!definition
+      `FactoryGuy does not have the application's store.
+       Use manualSetup(this.container) in model/component test
+       before using make/makeList`, this.store
     );
 
-    if (number) {
-      return Array(number).fill().map(() => this.make(...[name, ...opts]));
+    Ember.assert("makeList needs at least a name ( of model or named factory definition )", args.length >= 1);
+
+    let name       = args.shift(),
+        definition = FactoryGuy.lookupDefinitionForFixtureName(name);
+    Ember.assert("Can't find that factory named [" + name + "]", !!definition);
+
+    let number = args[0] || 0;
+    if (typeof number === 'number') {
+      args.shift();
+      let arr = [];
+      for (let i = 0; i < number; i++) {
+        arr.push(this.make.apply(this, [name, ...args]));
+      }
+      return arr;
     }
 
-    return opts.map(innerArgs => {
+    return args.map((innerArgs) => {
       if (Ember.typeOf(innerArgs) !== 'array') {
         innerArgs = [innerArgs];
       }
       return this.make(...[name, ...innerArgs]);
     });
-  }
-
-  ensureNameInArguments(method, args) {
-    Ember.assert(
-      `[ember-data-factory-guy] ${method} needs at least a name 
-      ( of model or named factory definition )`,
-      args.length > 0
-    );
-  }
-
-  ensureStore() {
-    Ember.assert(
-      `[ember-data-factory-guy] FactoryGuy does not have the application's store.
-       Use manualSetup(this.container) in model/component test
-       before using make/makeList`, this.store
-    );
   }
 
   reset() {
@@ -517,33 +478,6 @@ class FactoryGuy {
   }
 
   /**
-   extract list arguments from makeList, buildList where the name should be first,
-   and optionally a number next, or a list of traits and or options like:
-
-   ['users', 2]  => {name: 'users', number: 2}
-   ['users', 2, 'trait']  => {name: 'users', opts: ['trait']}
-   ['users', 2, 'trait1', 'trait2' ] => {name: 'users', number: 2, opts: ['trait1', 'trait2']}
-   ['users', 'trait1', 'trait2' ] =>
-   {name: 'users', number: undefined, opts: ['trait1', 'trait2']}
-   ['users', 'trait1', 'trait2', {name: 'Bob'} ] =>
-   {name: 'users', number: undefined, opts: ['trait1', 'trait2', {name: 'Bob'}]}
-
-   @param args
-   @returns {{name: *, number: (*|number), opts: *[]}}
-   */
-  static extractListArguments(...args) {
-    args = args.slice();
-    let name   = args.shift(),
-        number = args[0] || 0;
-    if (typeof number === 'number') {
-      args.shift();
-    } else {
-      number = undefined;
-    }
-    return {name, number, opts: args};
-  }
-
-  /**
    extract arguments for build and make function
 
    @param {String} name  fixture name
@@ -552,23 +486,21 @@ class FactoryGuy {
    @returns {Object} json fixture
    */
   static extractArguments(...args) {
-    args = args.slice();
     let name = args.shift();
     if (!name) {
-      throw new Error('[ember-data-factory-guy] build/make needs a factory name to build');
+      throw new Error('Build needs a factory name to build');
     }
-    return assign({name}, FactoryGuy.extractArgumentsShort(...args));
+    return assign({name: name}, FactoryGuy.extractArgumentsShort(...args));
   }
 
   static extractArgumentsShort(...args) {
-    args = args.slice();
     let opts = {};
     if (Ember.typeOf(args[args.length - 1]) === 'object') {
       opts = args.pop();
     }
     // whatever is left are traits
     let traits = Ember.A(args).compact();
-    return {opts, traits};
+    return {opts: opts, traits: traits};
   }
 
   /**

@@ -521,8 +521,8 @@ test("embeds belongsTo record when serializer attrs => deserialize: 'records' ",
     manager: {
       id: 1,
       name: {
-        first_name: "Tyrion",
-        last_name: "Lannister"
+        firstName: "Tyrion",
+        lastName: "Lannister"
       },
       salary: {
         id: 1,
@@ -544,8 +544,8 @@ test("embeds belongsTo record passed as prebuilt ( build ) json when serializer 
     manager: {
       id: 1,
       name: {
-        first_name: "Tyrion",
-        last_name: "Lannister"
+        firstName: "Tyrion",
+        lastName: "Lannister"
       },
       salary: {
         id: 1,
@@ -567,8 +567,8 @@ test("embeds hasMany records when serializer attrs => deserialize: 'records'", f
     manager: {
       id: 1,
       name: {
-        first_name: "Tyrion",
-        last_name: "Lannister"
+        firstName: "Tyrion",
+        lastName: "Lannister"
       },
       reviews: [
         {
@@ -597,8 +597,8 @@ test("embeds hasMany records passed as prebuilt ( buildList ) json when serializ
     manager: {
       id: 1,
       name: {
-        first_name: "Tyrion",
-        last_name: "Lannister"
+        firstName: "Tyrion",
+        lastName: "Lannister"
       },
       reviews: [
         {

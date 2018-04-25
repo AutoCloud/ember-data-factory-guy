@@ -759,18 +759,24 @@ SharedBehavior.mockQueryTests = function() {
     });
   });
 
-  test("using returns with model instances having hasMany models", async function(assert) {
-    let models = makeList('user', 2, 'with_hats');
-    mockQuery('user', {name: 'Bob'}).returns({models});
+  test("using returns with model instances having hasMany models", function(assert) {
+    run(() => {
+      let done = assert.async();
 
-    assert.equal(FactoryGuy.store.peekAll('user').get('content.length'), 2, 'start out with 2 instances');
+      let models = makeList('user', 2, 'with_hats');
+      mockQuery('user', {name: 'Bob'}).returns({models});
 
-    let users = await Ember.run(async () => FactoryGuy.store.query('user', {name: 'Bob'}));
-    assert.equal(users.get('length'), 2);
-    assert.equal(users.get('firstObject.name'), 'User1');
-    assert.equal(users.get('firstObject.hats.length'), 2);
-    assert.equal(users.get('lastObject.name'), 'User2');
-    assert.equal(FactoryGuy.store.peekAll('user').get('content.length'), 2, 'no new instances created');
+      assert.equal(FactoryGuy.store.peekAll('user').get('content.length'), 2, 'start out with 2 instances');
+
+      FactoryGuy.store.query('user', {name: 'Bob'}).then(function(users) {
+        assert.equal(users.get('length'), 2);
+        assert.equal(users.get('firstObject.name'), 'User1');
+        assert.equal(users.get('firstObject.hats.length'), 2);
+        assert.equal(users.get('lastObject.name'), 'User2');
+        assert.equal(FactoryGuy.store.peekAll('user').get('content.length'), 2, 'no new instances created');
+        done();
+      });
+    });
   });
 
   test("using returns with model instances with hasMany and belongsTo relationships", function(assert) {
