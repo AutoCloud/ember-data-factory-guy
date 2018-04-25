@@ -1137,13 +1137,11 @@ test("Using FactoryGuy.cacheOnlyMode with except", async function() {
 
 ### Acceptance Tests
 
-- For using new style of ember-qunit with ```setupApplicationTest``` check [user-view-test.js:](https://github.com/danielspaniel/ember-data-factory-guy/blob/master/tests/acceptance/user-view-test.js)
-
 ##### Using mock methods
 
 - Uses pretender
   - for mocking the ajax calls made by ember-data
-  - pretender library is installed with FactoryGuy
+  - this library is installed with FactoryGuy
 - http GET mocks
   - [mockFindRecord](#mockfindrecord)
   - [mockFindAll](#mockfindall)
@@ -1156,7 +1154,7 @@ test("Using FactoryGuy.cacheOnlyMode with except", async function() {
       - Example:
       ```javascript
         let mock = mockFindAll('user').returns({headers: {'X-Man': "Wolverine"});
-        mock.returns({headers: {'X-Weapon': "Claws"}});
+        mock.returns({headers: {'X-Weapon': "Claws"});
   - these mocks are are reusable
     - so you can simulate making the same ajax call ( url ) and return a different payload
 - http POST/PUT/DELETE
