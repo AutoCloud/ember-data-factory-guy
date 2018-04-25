@@ -46,13 +46,13 @@ test("logging response", async function(assert) {
   console.log.restore();
 });
 
-test("makeFakeSnapshot", function(assert) {
+test("makeSnapshot", function(assert) {
   let user = make('user');
 
   let tests = [
-    [[user], user, 'has record when model as arguments'],
-    [['user', user.id], user, 'has record when modelName, id as arguments'],
-    [['user'], undefined, 'does not have record when only modelName as arguments']
+    [[user], user, 'with model as arguments'],
+    [['user', user.id], user, 'with modelName, id as arguments'],
+    [['user'], undefined, 'with only modelName as arguments']
   ];
 
   for (let test of tests) {
