@@ -26,8 +26,7 @@ export default class MockAnyRequest extends MockRequest {
    * @returns {*}
    */
   returns(json) {
-    this.responseJson = json;
-    return this;
+    return this.responseJson = json;
   }
 
 }
