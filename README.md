@@ -1104,9 +1104,9 @@ test("Using FactoryGuy.cacheOnlyMode with except", async function() {
 ### Testing models, controllers, components
 
 - FactoryGuy needs to setup the factories before the test run.
-  - By default, you only need to call `manualSetup(this)` in unit/component/acceptance tests
+  - By default, you only need to call `manualSetup(this)` in unit/component tests
   - Or you can use the new setupFactoryGuy(hooks) method if your using the new qunit style tests
-   Sample usage: (works the same in any type of test)
+   Sample usage: (works the same in any test, not just integration)
 ```js
 module('Acceptance | User View', function(hooks) {
   setupApplicationTest(hooks);
