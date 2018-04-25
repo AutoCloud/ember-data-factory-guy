@@ -3,7 +3,7 @@ import FactoryGuy, { make, makeNew, makeList, build, buildList, clearStore } fro
 import {
   mockSetup, mockTeardown,
   mockFind, mockFindRecord, mockFindAll, mockReload, mockQuery,
-  mockQueryRecord, mockCreate, mockUpdate, mockDelete, mock
+  mockQueryRecord, mockCreate, mockUpdate, mockDelete
  } from './mocks/exposed-request-functions';
 
 import manualSetup from './utils/manual-setup';
@@ -23,6 +23,6 @@ export { make, makeNew, makeList, build, buildList, clearStore, manualSetup, Sce
 export {
   mockSetup, mockTeardown,
   mockFind, mockFindRecord, mockFindAll, mockReload, mockQuery,
-  mockQueryRecord, mockCreate, mockUpdate, mockDelete, mock
+  mockQueryRecord, mockCreate, mockUpdate, mockDelete
 };
 
