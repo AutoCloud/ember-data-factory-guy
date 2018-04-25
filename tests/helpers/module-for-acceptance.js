@@ -10,7 +10,7 @@ export default function(name, options = {}) {
   module(name, {
     beforeEach() {
       this.application = startApp();
-      mockSetup({logLevel: 0});
+      mockSetup();
       if (options.beforeEach) {
         return options.beforeEach.apply(this, arguments);
       }

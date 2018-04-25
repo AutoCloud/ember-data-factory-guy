@@ -87,16 +87,10 @@ export default class {
     return this;
   }
 
-  // for a fails response, the response you might have set ( like a payload ) will actually
-  // be discarded in favour of the error response that was built for you in fails method
-  actualResponseJson() {
-    let responseText = this.isErrorStatus(this.status) ? this.errorResponse : this.responseJson;
-    return JSON.stringify(responseText);
-  }
-
   getResponse() {
+    let responseText = this.isErrorStatus(this.status) ? this.errorResponse : this.responseJson;
     return {
-      responseText: this.actualResponseJson(),
+      responseText: JSON.stringify(responseText),
       headers: this.responseHeaders,
       status: this.status
     };
@@ -104,7 +98,7 @@ export default class {
 
   logInfo() {
     if (FactoryGuy.logLevel > 0) {
-      let json = JSON.parse(this.actualResponseJson()),
+      let json = JSON.parse(JSON.stringify(this.responseJson)),
           name = this.constructor.name.replace('Request', ''),
           info = ['[factory-guy]', `${name}(${this.modelName})`, json];
       if (!isEmptyObject(this.queryParams)) {

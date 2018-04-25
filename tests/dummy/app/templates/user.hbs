@@ -1,5 +1,1 @@
-{{#if model}}
-  {{single-user user=model createProject=(action "createProject")}}
-{{else}}
-  <div class="error">User not found</div>
-{{/if}}
+{{single-user user=model createProject=(action "createProject")}}
