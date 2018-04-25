@@ -587,7 +587,7 @@ You would use this to make models like:
 ```
 
 ### Using Factories
- - [`FactoryGuy.attributesFor`](#factoryguyattributesfor)
+ - [`FactoryGuy.attributesFor`](#factoryguyattributesFor)
    - returns attributes ( for now no relationship info )
  - [`FactoryGuy.make`](#factoryguymake)
    - push model instances into store
@@ -619,7 +619,7 @@ You would use this to make models like:
 
   import { attributesFor } from 'ember-data-factory-guy';
 
-  // make a user with certain traits and options
+  // make a user with the default attributes in user factory
   attributesFor('user', 'silly', {name: 'Fred'}); // => { name: 'Fred', style: 'silly'}
   
 ```
