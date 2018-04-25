@@ -10,6 +10,7 @@ class MockGetRequest extends MockRequest {
 
   constructor(modelName, requestType, defaultResponse) {
     super(modelName, requestType);
+//    console.log('defaultResponse',defaultResponse);
     if (defaultResponse !== undefined) {
       this.setResponseJson(this.fixtureBuilder.convertForBuild(modelName, defaultResponse));
     }
@@ -134,6 +135,7 @@ class MockGetRequest extends MockRequest {
 
   setResponseJson(json) {
     this.responseJson = json;
+//    console.log('setResponseJson', 'json', json, json.get());
     this.setupHandler();
   }
 
@@ -152,6 +154,7 @@ class MockGetRequest extends MockRequest {
       return isPartOf(request.queryParams, toParams(this.someQueryParams));
     }
     if (!isEmptyObject(this.queryParams)) {
+//      console.log("this.queryParams",toParams(this.queryParams),'request.queryParams',request.queryParams, Object.keys(request.queryParams));
       return isEquivalent(request.queryParams, toParams(this.queryParams));
     }
     return true;
