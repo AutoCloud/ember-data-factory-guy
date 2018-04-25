@@ -1,12 +1,12 @@
-import {isEmptyObject} from '../utils/helper-functions';
+import Ember from 'ember';
 import MockGetRequest from './mock-get-request';
 
 export default class MockFindAllRequest extends MockGetRequest {
 
   constructor(modelName) {
-    super(modelName, 'findAll', []);
+    super(modelName, 'findAll');
     this.setValidReturnsKeys(['models', 'json', 'ids','headers']);
-//    this.setResponseJson(this.fixtureBuilder.convertForBuild(modelName, []));
+    this.setResponseJson(this.fixtureBuilder.convertForBuild(modelName, []));
   }
 
   /**
@@ -21,7 +21,7 @@ export default class MockFindAllRequest extends MockGetRequest {
     @returns {boolean}
    */
   paramsMatch(settings) {
-    return isEmptyObject(settings.data);
+    return Ember.$.isEmptyObject(settings.data);
   }
 
 

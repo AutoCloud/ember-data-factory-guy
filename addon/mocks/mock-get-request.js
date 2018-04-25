@@ -2,18 +2,15 @@ import Ember from 'ember';
 import FactoryGuy from '../factory-guy';
 import Model from 'ember-data/model';
 import MockRequest from './mock-request';
-import {toParams, isEquivalent, isEmptyObject, isPartOf} from '../utils/helper-functions';
+import {isEquivalent, isPartOf} from '../utils/helper-functions';
 
 const assign = Ember.assign || Ember.merge;
 
 class MockGetRequest extends MockRequest {
 
-  constructor(modelName, requestType, defaultResponse) {
+  constructor(modelName, requestType) {
     super(modelName, requestType);
-//    console.log('defaultResponse',defaultResponse);
-    if (defaultResponse !== undefined) {
-      this.setResponseJson(this.fixtureBuilder.convertForBuild(modelName, defaultResponse));
-    }
+    this.setResponseJson(this.fixtureBuilder.convertForBuild(modelName, {}));
     this.validReturnsKeys = [];
     this.queryParams = {};
   }
@@ -119,7 +116,6 @@ class MockGetRequest extends MockRequest {
         }
         this.setResponseJson(json);
         break;
-
       case 'attrs': {
         let currentId   = this.responseJson.get('id'),
             modelParams = assign({ id: currentId }, options.attrs);
@@ -135,8 +131,6 @@ class MockGetRequest extends MockRequest {
 
   setResponseJson(json) {
     this.responseJson = json;
-//    console.log('setResponseJson', 'json', json, json.get());
-    this.setupHandler();
   }
 
   withParams(queryParams) {
@@ -149,13 +143,12 @@ class MockGetRequest extends MockRequest {
     return this;
   }
 
-  paramsMatch(request) {
-    if (!isEmptyObject(this.someQueryParams)) {
-      return isPartOf(request.queryParams, toParams(this.someQueryParams));
+  paramsMatch(settings) {
+    if (!Ember.$.isEmptyObject(this.someQueryParams)) {
+      return isPartOf(settings.data, this.someQueryParams);
     }
-    if (!isEmptyObject(this.queryParams)) {
-//      console.log("this.queryParams",toParams(this.queryParams),'request.queryParams',request.queryParams, Object.keys(request.queryParams));
-      return isEquivalent(request.queryParams, toParams(this.queryParams));
+    if (!Ember.$.isEmptyObject(this.queryParams)) {
+      return isEquivalent(this.queryParams, settings.data);
     }
     return true;
   }
