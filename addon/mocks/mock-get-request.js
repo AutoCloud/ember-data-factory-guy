@@ -113,6 +113,7 @@ class MockGetRequest extends MockStoreRequest {
         }
         this.setResponseJson(json);
         break;
+
       case 'attrs': {
         let currentId   = this.responseJson.get('id'),
             modelParams = assign({id: currentId}, options.attrs);
