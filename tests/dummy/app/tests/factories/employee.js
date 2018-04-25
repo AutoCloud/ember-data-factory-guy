@@ -8,7 +8,7 @@ FactoryGuy.define('employee', {
     birthDate: new Date('2016-05-01')
   },
   traits: {
-    withDesignation:{
+    with_designation:{
       designation: {}
     },
     default_name_setup: {
