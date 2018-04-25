@@ -56,7 +56,6 @@ const serializerOptions = {
   'comic-book': [
     DS.EmbeddedRecordsMixin, {
       attrs: {
-        includedVillains: { embedded: 'always' },
         company: { embedded: 'always' }, characters: { embedded: 'always' }
       }
     }
