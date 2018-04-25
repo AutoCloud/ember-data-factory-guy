@@ -11,15 +11,15 @@ import MockFindAllRequest from './mock-find-all-request';
 import MockDeleteRequest from './mock-delete-request';
 import RequestManager from './request-manager';
 
-export function mockSetup({responseTime, logLevel = 0} = {}) {
-  FactoryGuy.settings({logLevel, responseTime});
+export function mockSetup({ responseTime, logLevel = 0 } = {}) {
+  FactoryGuy.settings({ logLevel, responseTime });
 }
 
 export function mockTeardown() {
   FactoryGuy.resetMockAjax();
 }
 
-export function mock({type, url, responseText} = {}) {
+export function mock({type, url, responseText}={}) {
   return RequestManager.adHockMock({type, url, responseText});
 }
 
@@ -67,17 +67,17 @@ export function mockFindRecord(...args) {
   if (args[0] instanceof Model) {
     let model = args[0];
     modelName = model.constructor.modelName;
-    return new MockFindRecordRequest(modelName).returns({model});
+    return new MockFindRecordRequest(modelName).returns({ model });
   }
 
   modelName = args[0];
   let json = FactoryGuy.build.apply(FactoryGuy, arguments);
-  return new MockFindRecordRequest(modelName).returns({json});
+  return new MockFindRecordRequest(modelName).returns({ json });
 }
 
 export function mockFind() {
   Ember.deprecate("`mockFind` - has been deprecated. Use `mockFindRecord` method instead`",
-    false, {id: 'ember-data-factory-guy.mock-find', until: '2.8.0'});
+    false, { id: 'ember-data-factory-guy.mock-find', until: '2.8.0' });
   return mockFindRecord.apply(this, arguments);
 }
 
@@ -112,8 +112,8 @@ export function mockReload(...args) {
   Ember.assert("mockReload arguments are a model instance or a model type name and an id",
     modelName && id);
 
-  let json = FactoryGuy.fixtureBuilder(modelName).convertForBuild(modelName, {id: id});
-  return new MockReloadRequest(modelName).returns({json});
+  let json = FactoryGuy.fixtureBuilder(modelName).convertForBuild(modelName, { id: id });
+  return new MockReloadRequest(modelName).returns({ json });
 }
 
 /**
@@ -150,7 +150,7 @@ export function mockFindAll(...args) {
 
   if (args.length > 1) {
     let json = FactoryGuy.buildList.apply(FactoryGuy, args);
-    mock.returns({json});
+    mock.returns({ json });
   }
 
   return mock;
@@ -289,27 +289,10 @@ export function mockQueryRecord(modelName, queryParams) {
 
  @param {String} modelName  name of model you're creating like 'profile' for Profile
  */
-export function mockCreate(...args) {
+export function mockCreate(modelName) {
+  Ember.assert(`[ember-data-factory-guy] mockCreate requires at least a model type name`, modelName);
 
-  let model, modelName, attrs = {};
-  if (args[0] instanceof Model) {
-    model = args[0];
-    modelName = model.constructor.modelName;
-    // need (rest style) object with attributes.
-    // convert the json if it is json-api to this style
-    let json    = model.toJSON(),
-        builder = FactoryGuy.fixtureBuilder(modelName);
-    builder.wrapPayload(modelName, json);
-    attrs = json.get();
-  } else {
-    if (typeof args[0] === "string") {
-      [modelName] = args;
-    }
-  }
-
-  Ember.assert(`[ember-data-factory-guy] To mockUpdate pass in a model instance or a modelName`, modelName);
-
-  return new MockCreateRequest(modelName).returns({attrs});
+  return new MockCreateRequest(modelName);
 }
 
 /**
@@ -348,7 +331,7 @@ export function mockUpdate(...args) {
     }
   }
 
-  Ember.assert("[ember-data-factory-guy] To mockUpdate pass in a model instance or a modelName and an id or just a modelName", modelName);
+  Ember.assert("To mockUpdate pass in a model instance or a modelName and an id or just a modelName", modelName);
 
   return new MockUpdateRequest(modelName, id);
 }
