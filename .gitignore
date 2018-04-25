@@ -16,7 +16,6 @@
 # misc
 .ruby-gemset
 .ruby-version
-yarn-error.log
 
 stats/
 /.sass-cache
