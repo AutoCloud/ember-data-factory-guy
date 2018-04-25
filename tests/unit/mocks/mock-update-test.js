@@ -17,13 +17,6 @@ test("with incorrect parameters", function(assert) {
 
 });
 
-test("using returns when only setting modelName", function(assert) {
-  assert.throws(function() {
-    mockUpdate('profile').returns({});
-  }, "can't user returns when only specifying modelName");
-
-});
-
 test("mockId", function(assert) {
   let mock = mockUpdate('user', 1);
   assert.deepEqual(mock.mockId, {type: 'PATCH', url: '/users/1', num: 0});
@@ -53,7 +46,7 @@ test("logging response", async function(assert) {
   console.log.restore();
 });
 
-test("#makeFakeSnapshot", function(assert) {
+test("makeFakeSnapshot", function(assert) {
   let user = make('user');
 
   let tests = [
@@ -71,7 +64,7 @@ test("#makeFakeSnapshot", function(assert) {
   }
 });
 
-test("#getUrl", function(assert) {
+test("getUrl", function(assert) {
   let user = make('user');
 
   let tests = [
@@ -87,6 +80,13 @@ test("#getUrl", function(assert) {
 
     assert.equal(url, expectedUrl, message);
   }
+});
+
+test("using returns when only setting modelName", function(assert) {
+  assert.throws(function() {
+    mockUpdate('profile').returns({});
+  }, "can't user returns when only specifying modelName");
+
 });
 
 test("#getUrl uses urlForUpdateRecord if it is set on the adapter", function(assert) {
