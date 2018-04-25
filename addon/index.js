@@ -1,17 +1,10 @@
-import FactoryGuy, {
-  make,
-  makeNew,
-  makeList,
-  build,
-  buildList,
-  attributesFor
-} from './factory-guy';
+import FactoryGuy, { make, makeNew, makeList, build, buildList } from './factory-guy';
 
 import {
   mockSetup, mockTeardown,
   mockFind, mockFindRecord, mockFindAll, mockReload, mockQuery,
   mockQueryRecord, mockCreate, mockUpdate, mockDelete, mock, mockLinks
-} from './mocks/exposed-request-functions';
+ } from './mocks/exposed-request-functions';
 
 import manualSetup from './utils/manual-setup';
 
@@ -25,7 +18,7 @@ export default FactoryGuy;
 
 export { JSONFixtureBuilder, RESTFixtureBuilder, JSONAPIFixtureBuilder };
 
-export { make, makeNew, makeList, build, buildList, attributesFor, manualSetup, Scenario };
+export { make, makeNew, makeList, build, buildList, manualSetup, Scenario };
 
 export {
   mockSetup, mockTeardown,
