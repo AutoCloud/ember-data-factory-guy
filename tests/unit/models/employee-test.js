@@ -84,14 +84,10 @@ test('default employee with trait with custom name belongsTo', function(assert) 
 });
 
 test('manual setting up employee name', function(assert) {
-  let firstName = 'Joe',
-      lastName  = 'Black',
-      name      = build('name', {firstName, lastName}).get(),
-      employee  = make('employee', {name});
-
+  let employee = make('employee', 'geoffrey');
   run(() => {
-    assert.ok(employee.get('name.firstName') === firstName);
-    assert.ok(employee.get('name.lastName') === lastName);
+    assert.ok(employee.get('name.firstName') === 'Geoffrey');
+    assert.ok(employee.get('name.lastName') === 'Lannister');
   });
 });
 
