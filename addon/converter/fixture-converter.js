@@ -238,7 +238,7 @@ export default class {
         relationshipKey = this.transformRelationshipKey(relationship),
         isEmbedded      = this.isEmbeddedRelationship(parentModelName, relationshipKey);
 
-    if (hasManyRecords && hasManyRecords.isProxy) {
+    if (hasManyRecords.isProxy) {
       return this.addListProxyData(hasManyRecords, relationship, relationships, isEmbedded);
     }
 
