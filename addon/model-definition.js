@@ -120,36 +120,27 @@ class ModelDefinition {
    @param {String} traitArgs array of traits
    @returns {Object} json
    */
-  build(name, opts={}, traitNames = [], buildType = 'build') {
-
+  build(name, opts, traitArgs = [], buildType = 'build') {
+    let traitsObj = {};
+    traitArgs.forEach(trait => {
+      Ember.assert(`You're trying to use a trait [${trait}] for model ${this.modelName} but that trait can't be found.`, this.traits[trait]);
+      assign(traitsObj, this.traits[trait]);
+    });
     let modelAttributes = this.namedModels[name] || {};
-
     // merge default, modelAttributes, traits and opts to get the rough fixture
-    let fixture = assign({}, this.default, modelAttributes);
-
-    // set the id, unless it was already set in opts
-    if (!fixture.id && !opts.id) {
-      // Setting a flag to indicate that this is a generated an id,
-      // so it can be rolled back if the fixture throws an error.
-      fixture._generatedId = true;
-      fixture.id = this.nextId();
-    }
+    let fixture = assign({}, this.default, modelAttributes, traitsObj, opts);
 
     if (this.notPolymorphic !== undefined) {
       fixture._notPolymorphic = true;
     }
 
-    traitNames.forEach(traitName => {
-      let trait = this.traits[traitName];
-      Ember.assert(
-        `You're trying to use a trait [${traitName}] for model ${this.modelName} but that trait can't be found.`, trait);
-      if (Ember.typeOf(trait) === 'function') {
-        trait(fixture);
-      }
-      assign(fixture, trait);
-    });
-
-    assign(fixture, opts);
+    // set the id, unless it was already set in opts
+    if (!fixture.id) {
+      // Setting a flag to indicate that this is a generated an id,
+      // so it can be rolled back if the fixture throws an error.
+      fixture._generatedId = true;
+      fixture.id = this.nextId();
+    }
 
     try {
       // deal with attributes that are functions or objects
