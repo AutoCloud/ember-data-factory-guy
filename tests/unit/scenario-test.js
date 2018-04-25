@@ -5,7 +5,7 @@ import {
   Scenario,
   make, makeNew, makeList, build, buildList,
   mockFindRecord, mockFindAll, mockReload, mockQuery, mockQueryRecord,
-  mockCreate, mockUpdate, mockDelete, mock
+  mockCreate, mockUpdate, mockDelete
 } from 'ember-data-factory-guy';
 
 module('scenario');
@@ -29,5 +29,4 @@ test("proxies all mock request methods", function(assert) {
   assert.equal(scenario.mockCreate, mockCreate);
   assert.equal(scenario.mockUpdate, mockUpdate);
   assert.equal(scenario.mockDelete, mockDelete);
-  assert.equal(scenario.mock, mock);
 });
