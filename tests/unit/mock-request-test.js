@@ -86,37 +86,49 @@ test("with errors response that will be converted but does not have errors as ob
 
 moduleFor('serializer:application', 'MockRequest#timeCalled', inlineSetup(serializerType));
 
-test("can verify how many times a queryRecord call was mocked", async function(assert) {
-  return Ember.run(async () => {
+test("can verify how many times a queryRecord call was mocked", function(assert) {
+  Ember.run(() => {
+    const done = assert.async();
     const mock = mockQueryRecord('company', {}).returns({ json: build('company') });
 
-    await FactoryGuy.store.queryRecord('company', {});
-    await FactoryGuy.store.queryRecord('company', {});
-    assert.equal(mock.timesCalled, 2);
+    FactoryGuy.store.queryRecord('company', {}).then(() => {
+      FactoryGuy.store.queryRecord('company', {}).then(() => {
+        assert.equal(mock.timesCalled, 2);
+        done();
+      });
+    });
   });
 });
 
-test("can verify how many times a findAll call was mocked", async function(assert) {
-  return Ember.run(async () => {
+test("can verify how many times a findAll call was mocked", function(assert) {
+  Ember.run(() => {
+    const done = assert.async();
     const mock = mockFindAll('company');
 
-    await FactoryGuy.store.findAll('company');
-    await FactoryGuy.store.findAll('company');
-    assert.equal(mock.timesCalled, 2);
+    FactoryGuy.store.findAll('company').then(() => {
+      FactoryGuy.store.findAll('company').then(() => {
+        assert.equal(mock.timesCalled, 2);
+        done();
+      });
+    });
   });
 });
 
-test("can verify how many times an update call was mocked", async function(assert) {
-  const company = make('company');
-  const mock = mockUpdate(company);
+test("can verify how many times an update call was mocked", function(assert) {
+  Ember.run(() => {
+    const done = assert.async();
+    const company = make('company');
+    const mock = mockUpdate(company);
 
-  Ember.run(() => company.set('name', 'ONE'));
-  await Ember.run(async () => company.save());
-
-  Ember.run(() => company.set('name', 'TWO'));
-  await Ember.run(async () => company.save());
-
-  assert.equal(mock.timesCalled, 2);
+    company.set('name', 'ONE');
+    company.save().then(() => {
+      company.set('name', 'TWO');
+      company.save().then(() => {
+        assert.equal(mock.timesCalled, 2);
+        done();
+      });
+    });
+  });
 });
 
 moduleFor('serializer:application', 'MockRequest#basicRequestMatches', inlineSetup(serializerType));
@@ -176,8 +188,9 @@ test("succeeds even if the given URL has query parameters that don't match", fun
 
 moduleFor('serializer:application', 'MockRequest #disable, #enable, and #destroy', inlineSetup(serializerType));
 
-test("can enable, disable, and destroy mock", async function(assert) {
-  return Ember.run(async () => {
+test("can enable, disable, and destroy mock", function(assert) {
+  Ember.run(() => {
+    const done = assert.async();
     let json1 = build('user');
     let json2 = build('user');
     let mock1 = mockQueryRecord('user', { id: 1 }).returns({ json: json1 });
@@ -185,21 +198,23 @@ test("can enable, disable, and destroy mock", async function(assert) {
 
     assert.notOk(mock1.isDestroyed, "isDestroyed is false initially");
 
-    let data = await FactoryGuy.store.queryRecord('user', { id: 1 });
-    assert.equal(data.get('id'), json1.get('id'), "the first mock works initially");
-
-    mock1.disable();
-    data = await FactoryGuy.store.queryRecord('user', { id: 1 });
-    assert.equal(data.get('id'), json2.get('id'), "the first mock doesn't work once it's disabled");
-
-    mock1.enable();
-    data = await FactoryGuy.store.queryRecord('user', { id: 1 });
-    assert.equal(data.get('id'), json1.get('id'), "the first mock works again after enabling");
-
-    mock1.destroy();
-    assert.ok(mock1.isDestroyed, "isDestroyed is set to true once the mock is destroyed");
-    data = await FactoryGuy.store.queryRecord('user', { id: 1 });
-    assert.equal(data.get('id'), json2.get('id'), "the destroyed first mock doesn't work");
+    FactoryGuy.store.queryRecord('user', { id: 1 }).then((data) => {
+      assert.equal(data.get('id'), json1.get('id'), "the first mock works initially");
+      mock1.disable();
+      FactoryGuy.store.queryRecord('user', { id: 1 }).then((data) => {
+        assert.equal(data.get('id'), json2.get('id'), "the first mock doesn't work once it's disabled");
+        mock1.enable();
+        FactoryGuy.store.queryRecord('user', { id: 1 }).then((data) => {
+          assert.equal(data.get('id'), json1.get('id'), "the first mock works again after enabling");
+          mock1.destroy();
+          assert.ok(mock1.isDestroyed, "isDestroyed is set to true once the mock is destroyed");
+          FactoryGuy.store.queryRecord('user', { id: 1 }).then((data) => {
+            assert.equal(data.get('id'), json2.get('id'), "the destroyed first mock doesn't work");
+            done();
+          });
+        });
+      });
+    });
   });
 });
 
