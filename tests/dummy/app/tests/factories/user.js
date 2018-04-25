@@ -7,7 +7,8 @@ FactoryGuy.define('user', {
   // default values for 'user' attributes
   default: {
     style: 'normal',
-    name: FactoryGuy.generate('name')
+    name: FactoryGuy.generate('name'),
+    //company: (f) => ({links: `/users/${f.id}/company`}),
   },
   // named 'user' type with custom attributes
   admin: {

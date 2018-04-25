@@ -94,9 +94,7 @@ export default class {
   }
 
   transformRelationshipKey(relationship) {
-    let {parentType} = relationship,
-        type         = parentType && parentType.modelName || relationship.type,
-        transformFn  = this.getTransformKeyFunction(type, 'Relationship');
+    let transformFn = this.getTransformKeyFunction(relationship.parentType.modelName, 'Relationship');
     return transformFn(relationship.key, relationship.kind);
   }
 
