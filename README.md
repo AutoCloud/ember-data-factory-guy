@@ -1078,6 +1078,7 @@ test("Using FactoryGuy.cacheOnlyMode with except", function() {
 
 - FactoryGuy needs to setup the factories before the test run.
   - By default, you only need to call `manualSetup(this.container)` in unit/component tests
+  - If you are using mock methods, such as `mockQuery`, use `mockSetup()` and `mockTeardown()`
 
 - Sample model test: [profile-test.js](https://github.com/danielspaniel/ember-data-factory-guy/blob/master/tests/unit/models/profile-test.js)
   - Use `moduleForModel` ( ember-qunit ), or `describeModel` ( ember-mocha ) test helper
@@ -1171,13 +1172,13 @@ The `isDestroyed` property is set to `true` when the mock is destroyed.
 
 
 ##### setup and teardown
-  - As of v2.13.15 mockSetup and mockTeardown are no longer needed
+  - Use ```mockSetup()``` in test setup/beforeEach
    - set logging options here:
       - logLevel ( 0 - off , 1 - on ) for seeing the FactoryGuy responses
       - responseTime ( in millis )  for simulating slower responses
     - Example:
     ```javascript
-      FactoryGuy.settiongs({logLevel: 1, responseTime: 1000});
+      mockSetup({logLevel: 1, responseTime: 1000});
     ```
   - Easiest is to set them up in [module-for-acceptance.js:](https://github.com/danielspaniel/ember-data-factory-guy/blob/master/tests/helpers/module-for-acceptance.js)
 
