@@ -59,9 +59,9 @@ test("returns() method accepts only id, model, json or header as keys", function
   });
 });
 
-test("mock has mockId", function(assert) {
+test("the mock handler is assigned an index", function(assert) {
   let mock = mockQueryRecord('user');
-  assert.deepEqual(mock.mockId, { type: 'GET', url: '/users', num: 0 });
+  assert.equal(mock.index, 'GET /users-1')
 });
 
 test("using fails makes the request fail", function(assert) {
