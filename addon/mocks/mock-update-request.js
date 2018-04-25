@@ -38,12 +38,8 @@ export default class MockUpdateRequest extends MaybeIdUrlMatch(AttributeMatcher(
 
   /**
    This returns only accepts attrs key
-
    These attrs are those attributes or relationships that
    you would like returned with the model when the update succeeds.
-
-   You can't user returns if you use mockUpdate with only a modelName like:
-     mockUpdate('user'); ( no id specified )
 
    @param {Object} returns attributes and or relationships to send with payload
    */
@@ -61,16 +57,14 @@ export default class MockUpdateRequest extends MaybeIdUrlMatch(AttributeMatcher(
   }
 
   /**
-   Adapters freak out if update payload is non empty and there is no id.
-
-   So, if you use mockUpdate like this:
-     mockUpdate('user'); ( no id specified ) this mock will return null
+   Adapters freak out if update payload is non empty response with no id.
+   So, if there is no id specified for this update => return null
 
    @returns {*}
    */
   getResponse() {
     this.responseJson = null;
-    if (Object.keys(this.returnArgs).length) {
+    if (this.id) {
       let args = assign({}, this.matchArgs, this.returnArgs),
           json = assign({}, args, {id: this.id});
       this.responseJson = this.fixtureBuilder.convertForBuild(this.modelName, json);
