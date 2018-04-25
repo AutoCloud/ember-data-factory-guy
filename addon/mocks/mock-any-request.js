@@ -2,12 +2,11 @@ import MockRequest from './mock-request';
 
 export default class MockAnyRequest extends MockRequest {
 
-  constructor({type = 'GET', url, responseText, status = 200}) {
+  constructor({type, url, responseText}) {
     super();
     this.responseJson = responseText;
     this.url = url;
     this.type = type;
-    this.status = status;
     this.setupHandler();
   }
 
@@ -18,5 +17,4 @@ export default class MockAnyRequest extends MockRequest {
   getType() {
     return this.type;
   }
-
 }
