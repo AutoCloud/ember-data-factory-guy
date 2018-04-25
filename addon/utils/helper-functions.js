@@ -1,7 +1,6 @@
 /* global requirejs */
 import Ember from 'ember';
 import require from 'require';
-import { assign } from '@ember/polyfills';
 
 /**
  *
@@ -71,11 +70,11 @@ export function mergeDeep(target, ...sources) {
     for (const key in source) {
       if (isObject(source[key])) {
         if (!target[key]) {
-          assign(target, { [key]: {} });
+          Object.assign(target, { [key]: {} });
         }
         mergeDeep(target[key], source[key]);
       } else {
-        assign(target, { [key]: source[key] });
+        Object.assign(target, { [key]: source[key] });
       }
     }
   }

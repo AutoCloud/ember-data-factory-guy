@@ -3,7 +3,6 @@ import DS from 'ember-data';
 import ModelDefinition from './model-definition';
 import FixtureBuilderFactory from './builder/fixture-builder-factory';
 import RequestManager from './mocks/request-manager';
-import { assign } from '@ember/polyfills';
 
 let modelDefinitions = {};
 
@@ -490,7 +489,7 @@ class FactoryGuy {
     if (!name) {
       throw new Error('Build needs a factory name to build');
     }
-    return assign({name: name}, FactoryGuy.extractArgumentsShort(...args));
+    return Object.assign({name: name}, FactoryGuy.extractArgumentsShort(...args));
   }
 
   static extractArgumentsShort(...args) {
