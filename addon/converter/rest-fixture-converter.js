@@ -1,8 +1,7 @@
 import Ember from 'ember';
 import JSONFixtureConverter from './json-fixture-converter';
 
-import { pluralize } from 'ember-inflector';
-const { dasherize } = Ember.String;
+const { pluralize, dasherize } = Ember.String;
 
 /**
  Convert base fixture to a REST Serializer formatted payload.
