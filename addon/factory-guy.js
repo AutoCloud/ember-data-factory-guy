@@ -18,7 +18,6 @@ class FactoryGuy {
   settings({logLevel = 0, responseTime = null} = {}) {
     RequestManager.settings({responseTime});
     this.logLevel = logLevel;
-    return RequestManager.settings();
   }
 
   setStore(aStore) {
