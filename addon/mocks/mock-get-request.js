@@ -81,7 +81,7 @@ class MockGetRequest extends MockStoreRequest {
       case 'model':
         model = options.model;
 
-        Ember.assert(`[ember-data-factory-guy] argument ( model ) must be a Model instance - found type:'
+        Ember.assert(`argument ( model ) must be a Model instance - found type:'
           ${Ember.typeOf(model)}`, (model instanceof Model));
 
         json = {id: model.id};
@@ -96,10 +96,12 @@ class MockGetRequest extends MockStoreRequest {
       }
       case 'models': {
         models = options.models;
-        Ember.assert(`[ember-data-factory-guy] argument ( models ) must be an array - found type:'
+        Ember.assert(`argument ( models ) must be an array - found type:'
           ${Ember.typeOf(models)}`, Ember.isArray(models));
 
-        json = models.map(model => ({id: model.id}));
+        json = models.map(model => {
+          return {id: model.id, type: model.constructor.modelName};
+        });
 
         json = this.fixtureBuilder.convertForBuild(modelName, json);
         this.setResponseJson(json);
