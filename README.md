@@ -2013,7 +2013,7 @@ Your trait function assigns the title as you described in the function
 import FactoryGuy from 'ember-data-factory-guy';
 
 FactoryGuy.define("user", {
-  default: { // the () around the links objects is needed
+  default: {
     company: (f) => ({links: `/users/${f.id}/company`})
   },
   traits: {
