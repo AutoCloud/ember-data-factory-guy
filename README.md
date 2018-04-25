@@ -1170,15 +1170,16 @@ the disabled mock using `enable()`.
 The `isDestroyed` property is set to `true` when the mock is destroyed.
 
 
-##### setup 
+##### setup and teardown
   - As of v2.13.15 mockSetup and mockTeardown are no longer needed
-  - Use FactoryGuy.settings to set:
-    - logLevel ( 0 - off , 1 - on ) for seeing the FactoryGuy responses
-    - responseTime ( in millis )  for simulating slower responses
+   - set logging options here:
+      - logLevel ( 0 - off , 1 - on ) for seeing the FactoryGuy responses
+      - responseTime ( in millis )  for simulating slower responses
     - Example:
     ```javascript
       FactoryGuy.settiongs({logLevel: 1, responseTime: 1000});
     ```
+  - Easiest is to set them up in [module-for-acceptance.js:](https://github.com/danielspaniel/ember-data-factory-guy/blob/master/tests/helpers/module-for-acceptance.js)
 
 ##### Using fails method
   - Usable on all mocks
