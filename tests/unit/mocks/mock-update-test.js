@@ -17,11 +17,6 @@ test("with incorrect parameters", function(assert) {
 
 });
 
-test("mockId", function(assert) {
-  let mock = mockUpdate('user', 1);
-  assert.deepEqual(mock.mockId, {type: 'PATCH', url: '/users/1', num: 0});
-});
-
 test("logging response", async function(assert) {
   FactoryGuy.settings({logLevel: 1});
 
@@ -46,6 +41,11 @@ test("logging response", async function(assert) {
   console.log.restore();
 });
 
+test("makeSnapshot when modelName, id available", function(assert) {
+  let mock = mockUpdate('user', 1);
+  assert.deepEqual(mock.mockId, {type: 'PATCH', url: '/users/1', num: 0});
+});
+
 test("makeSnapshot", function(assert) {
   let user = make('user');
 
@@ -62,6 +62,11 @@ test("makeSnapshot", function(assert) {
         {record} = snapshot;
     assert.deepEqual(record, expectedRecord, message);
   }
+});
+
+test("mockId", function(assert) {
+  let mock = mockUpdate('user', 1);
+  assert.deepEqual(mock.mockId, {type: 'PATCH', url: '/users/1', num: 0});
 });
 
 test("getUrl", function(assert) {
