@@ -9,7 +9,7 @@ const serializerType = '-json-api';
 
 moduleFor('serializer:application', 'MockFindAll', inlineSetup(serializerType));
 
-test("mockId", function(assert) {
+test("mock has mockId", function(assert) {
   let mock = mockFindAll('user');
   assert.deepEqual(mock.mockId, {type: 'GET', url: '/users', num: 0});
 });
