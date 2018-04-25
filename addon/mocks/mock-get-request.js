@@ -136,10 +136,6 @@ class MockGetRequest extends MockStoreRequest {
     return this;
   }
 
-  hasQueryParams() {
-    return !isEmptyObject(this.queryParams);
-  }
-
   withSomeParams(someQueryParams) {
     this.someQueryParams = someQueryParams;
     return this;
@@ -155,8 +151,8 @@ class MockGetRequest extends MockStoreRequest {
     return true;
   }
 
-  extraRequestMatches(request) {
-    return this.paramsMatch(request);
+  extraRequestMatches(settings) {
+    return this.paramsMatch(settings);
   }
 
 }

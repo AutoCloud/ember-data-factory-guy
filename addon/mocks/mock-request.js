@@ -118,10 +118,6 @@ export default class {
     return true;
   }
 
-  hasQueryParams() {
-    return false;
-  }
-
   extraRequestMatches(/*request*/) {
     return true;
   }
