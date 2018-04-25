@@ -145,6 +145,11 @@ function inlineSetup(serializerType) {
     beforeEach: function() {
       containerSetup(this.container, serializerType);
       FactoryGuy.settings({ responseTime: 0, logLevel: 0 });
+    },
+    afterEach: function() {
+      Ember.run(function() {
+        FactoryGuy.reset();
+      });
     }
   };
 }

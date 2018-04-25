@@ -12,16 +12,11 @@ import MockDeleteRequest from './mock-delete-request';
 import MockAnyRequest from './mock-any-request';
 
 export function mockSetup({responseTime, logLevel = 0} = {}) {
-  Ember.deprecate(`[ember-data-factory-guy] mockSetup is no longer needed. Use FactoryGuy.settings instead`,
-    false,
-    {id: 'ember-data-factory-guy.mock-setup', until: '2.14.0'});
   FactoryGuy.settings({logLevel, responseTime});
 }
 
 export function mockTeardown() {
-  Ember.deprecate(`[ember-data-factory-guy] mockTeardown is no longer needed. Mock teardown is done automatically now after every test.`,
-    false,
-    {id: 'ember-data-factory-guy.mock-teardown', until: '2.14.0'});
+  FactoryGuy.resetMockAjax();
 }
 
 export function mock({type, url, responseText} = {}) {
