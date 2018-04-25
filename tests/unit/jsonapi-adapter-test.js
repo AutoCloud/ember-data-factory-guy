@@ -1,16 +1,10 @@
-import { moduleFor, test } from 'ember-qunit';
+import {moduleFor, test} from 'ember-qunit';
 import Ember from 'ember';
-import FactoryGuy, {
-  make,
-  build,
-  buildList,
-  mockFindRecord,
-  mockCreate
-} from 'ember-data-factory-guy';
+import FactoryGuy, {make, build, buildList, mockFindRecord, mockCreate} from 'ember-data-factory-guy';
 
 import SharedCommonBehavior from './shared-common-behaviour';
 import SharedAdapterBehaviour from './shared-adapter-behaviour';
-import { inlineSetup } from '../helpers/utility-methods';
+import {inlineSetup} from '../helpers/utility-methods';
 
 let serializer = 'DS.JSONAPISerializer';
 let serializerType = '-json-api';
@@ -33,8 +27,8 @@ moduleFor('serializer:application', `${serializer} #mockFindRecord custom`, inli
 test("when returns json (plain) is used", function(assert) {
   Ember.run(() => {
     let done      = assert.async(),
-        json      = {data: {id: 1, type: 'profile', attributes: {description: 'the desc'}}},
-        mock      = mockFindRecord('profile').returns({json}),
+        json      = { data: { id: 1, type: 'profile', attributes: { description: 'the desc' } } },
+        mock      = mockFindRecord('profile').returns({ json }),
         profileId = mock.get('id');
 
     FactoryGuy.store.findRecord('profile', profileId).then(function(profile) {
@@ -52,13 +46,13 @@ test("match belongsTo with custom payloadKeyFromModelName function", function(as
     let done = assert.async();
 
     let entryType = make('entry-type');
-    mockCreate('entry').match({entryType: entryType});
+    mockCreate('entry').match({ entryType: entryType });
 
-    FactoryGuy.store.createRecord('entry', {entryType: entryType}).save()
-              .then((entry) => {
-                assert.equal(entry.get('entryType.id'), entryType.id);
-                done();
-              });
+    FactoryGuy.store.createRecord('entry', { entryType: entryType }).save()
+      .then((entry) => {
+        assert.equal(entry.get('entryType.id'), entryType.id);
+        done();
+      });
   });
 });
 
@@ -67,14 +61,14 @@ test("match hasMany with custom payloadKeyFromModelName function", function(asse
     let done = assert.async();
 
     let entry = make('entry');
-    mockCreate('entry-type').match({entries: [entry]});
+    mockCreate('entry-type').match({ entries: [entry] });
 
-    FactoryGuy.store.createRecord('entry-type', {entries: [entry]}).save()
-              .then((entryType) => {
-                let entries = entryType.get('entries');
-                assert.deepEqual(entries.mapBy('id'), [entry.id]);
-                done();
-              });
+    FactoryGuy.store.createRecord('entry-type', { entries: [entry] }).save()
+      .then((entryType) => {
+        let entries = entryType.get('entries');
+        assert.deepEqual(entries.mapBy('id'), [entry.id]);
+        done();
+      });
   });
 });
 
@@ -82,7 +76,7 @@ moduleFor('serializer:application', `${serializer} FactoryGuy#build get`, inline
 
 test("returns all attributes with no key", function(assert) {
   let user = build('user');
-  assert.deepEqual(user.get(), {id: 1, name: 'User1', style: 'normal'});
+  assert.deepEqual(user.get(), { id: 1, name: 'User1', style: 'normal' });
   assert.equal(user.get().id, 1);
   assert.equal(user.get().name, 'User1');
 });
@@ -95,27 +89,27 @@ test("returns an attribute with a key", function(assert) {
 
 test("returns a relationship with a key", function(assert) {
   let user = build('user', 'with_company');
-  assert.deepEqual(user.get('company'), {id: 1, type: 'company'});
+  assert.deepEqual(user.get('company'), { id: 1, type: 'company' });
 });
 
 moduleFor('serializer:application', `${serializer} FactoryGuy#buildList get`, inlineSetup(serializerType));
 
 test("returns array of all attributes with no key", function(assert) {
   let users = buildList('user', 2);
-  assert.deepEqual(users.get(), [{id: 1, name: 'User1', style: "normal"}, {id: 2, name: 'User2', style: "normal"}]);
+  assert.deepEqual(users.get(), [{ id: 1, name: 'User1', style: "normal" }, { id: 2, name: 'User2', style: "normal" }]);
 });
 
 test("returns an attribute with an index and key", function(assert) {
   let users = buildList('user', 2);
-  assert.deepEqual(users.get(0), {id: 1, name: 'User1', style: "normal"});
+  assert.deepEqual(users.get(0), { id: 1, name: 'User1', style: "normal" });
   assert.equal(users.get(0).id, 1);
-  assert.deepEqual(users.get(1), {id: 2, name: 'User2', style: "normal"});
+  assert.deepEqual(users.get(1), { id: 2, name: 'User2', style: "normal" });
   assert.equal(users.get(1).name, 'User2');
 });
 
 test("returns a relationship with an index and key", function(assert) {
   let user = buildList('user', 2, 'with_company');
-  assert.deepEqual(user.get(1).company, {id: 2, type: 'company'});
+  assert.deepEqual(user.get(1).company, { id: 2, type: 'company' });
 });
 
 moduleFor('serializer:application', `${serializer} FactoryGuy#buildList custom`, inlineSetup(serializerType));
@@ -153,7 +147,7 @@ test("sideloads belongsTo records which are built from fixture definition", func
         },
         relationships: {
           user: {
-            data: {id: 1, type: 'user'}
+            data: { id: 1, type: 'user' }
           }
 
         }
@@ -173,7 +167,7 @@ test("sideloads belongsTo records which are built from fixture definition", func
 
 test("sideloads belongsTo record passed as ( prebuilt ) json", function(assert) {
   let user = build('user');
-  let json = build('project', {user: user});
+  let json = build('project', { user: user });
   json.unwrap();
 
   assert.deepEqual(json,
@@ -186,7 +180,7 @@ test("sideloads belongsTo record passed as ( prebuilt ) json", function(assert) 
         },
         relationships: {
           user: {
-            data: {id: 1, type: 'user'}
+            data: { id: 1, type: 'user' }
           }
 
         }
@@ -218,7 +212,7 @@ test("sideloads many belongsTo records which are built from fixture definition",
         },
         relationships: {
           user: {
-            data: {id: 1, type: 'user'}
+            data: { id: 1, type: 'user' }
           }
 
         }
@@ -237,7 +231,7 @@ test("sideloads many belongsTo records which are built from fixture definition",
 });
 
 test("with more than one trait and custom attributes", function(assert) {
-  let json = build('project', 'big', 'with_user', {title: 'Crazy Project'});
+  let json = build('project', 'big', 'with_user', { title: 'Crazy Project' });
   json.unwrap();
   assert.deepEqual(json,
     {
@@ -249,7 +243,7 @@ test("with more than one trait and custom attributes", function(assert) {
         },
         relationships: {
           user: {
-            data: {id: 1, type: 'user'}
+            data: { id: 1, type: 'user' }
           }
 
         }
@@ -280,7 +274,7 @@ test("with trait with custom belongsTo association object", function(assert) {
         },
         relationships: {
           user: {
-            data: {id: 1, type: 'user'}
+            data: { id: 1, type: 'user' }
           }
         }
       },
@@ -310,7 +304,7 @@ test("using trait with attribute using FactoryGuy.belongsTo method", function(as
         },
         relationships: {
           user: {
-            data: {id: 1, type: 'user'}
+            data: { id: 1, type: 'user' }
           }
 
         }
@@ -361,8 +355,8 @@ test("sideloads hasMany records built from fixture definition", function(assert)
         relationships: {
           projects: {
             data: [
-              {id: 1, type: 'project'},
-              {id: 2, type: 'project'}
+              { id: 1, type: 'project' },
+              { id: 2, type: 'project' }
             ]
           }
         }
@@ -388,7 +382,7 @@ test("sideloads hasMany records built from fixture definition", function(assert)
 
 test("sideloads hasMany records passed as prebuilt ( buildList ) attribute", function(assert) {
   let projects = buildList('project', 2);
-  let json = build('user', {projects: projects});
+  let json = build('user', { projects: projects });
   json.unwrap();
 
   assert.deepEqual(json,
@@ -403,8 +397,8 @@ test("sideloads hasMany records passed as prebuilt ( buildList ) attribute", fun
         relationships: {
           projects: {
             data: [
-              {id: 1, type: 'project'},
-              {id: 2, type: 'project'}
+              { id: 1, type: 'project' },
+              { id: 2, type: 'project' }
             ]
           }
         }
@@ -431,7 +425,7 @@ test("sideloads hasMany records passed as prebuilt ( buildList ) attribute", fun
 test("sideloads hasMany records passed as prebuilt ( array of build ) attribute", function(assert) {
   let project1 = build('project');
   let project2 = build('project');
-  let json = build('user', {projects: [project1, project2]});
+  let json = build('user', { projects: [project1, project2] });
   json.unwrap();
 
   assert.deepEqual(json,
@@ -446,8 +440,8 @@ test("sideloads hasMany records passed as prebuilt ( array of build ) attribute"
         relationships: {
           projects: {
             data: [
-              {id: 1, type: 'project'},
-              {id: 2, type: 'project'}
+              { id: 1, type: 'project' },
+              { id: 2, type: 'project' }
             ]
           }
         }
@@ -492,7 +486,7 @@ test("creates default json for model", function(assert) {
 
 
 test("can override default model attributes", function(assert) {
-  let json = build('user', {name: 'bob'});
+  let json = build('user', { name: 'bob' });
   json.unwrap();
 
   assert.deepEqual(json,
@@ -530,7 +524,7 @@ test("can have named model definition with custom attributes", function(assert) 
 
 
 test("can override named model attributes", function(assert) {
-  let json = build('admin', {name: 'AdminGuy'});
+  let json = build('admin', { name: 'AdminGuy' });
   json.unwrap();
 
   assert.deepEqual(json,
@@ -592,7 +586,7 @@ test("when no custom serialize keys functions exist, dasherizes attributes and r
         },
         relationships: {
           'super-hero': {
-            data: {id: 1, type: 'super-hero'}
+            data: { id: 1, type: 'super-hero' }
           }
         }
       },
@@ -633,7 +627,7 @@ test("using custom serialize keys function for transforming attributes and relat
         },
         relationships: {
           'super_hero': {
-            data: {id: 1, type: 'super-hero'}
+            data: { id: 1, type: 'super-hero' }
           }
         }
       },
@@ -658,13 +652,13 @@ test("using custom serializer with property forbidden for serialization", functi
       serialize: false
     }
   };
-  let profile = build('profile', 'with_created_at', {created_at: date});
+  let profile = build('profile', 'with_created_at', { created_at: date });
   assert.equal(profile.get("created-at"), date.toJSON());
 });
 
 test("serializes custom attributes types", function(assert) {
-  let info = {first: 1};
-  let json = build('user', {info: info});
+  let info = { first: 1 };
+  let json = build('user', { info: info });
   json.unwrap();
 
   assert.deepEqual(json,
@@ -693,7 +687,7 @@ test("with (nested json fixture) belongsTo has a hasMany association which has a
       },
       relationships: {
         user: {
-          data: {id: 1, type: "user"},
+          data: { id: 1, type: "user" },
         }
       }
     },
@@ -712,7 +706,7 @@ test("with (nested json fixture) belongsTo has a hasMany association which has a
         },
         relationships: {
           outfit: {
-            data: {id: 1, type: 'outfit'}
+            data: { id: 1, type: 'outfit' }
           }
         }
       }, {
@@ -729,7 +723,7 @@ test("with (nested json fixture) belongsTo has a hasMany association which has a
         },
         relationships: {
           outfit: {
-            data: {id: 2, type: 'outfit'}
+            data: { id: 2, type: 'outfit' }
           }
         }
       }, {
@@ -742,8 +736,8 @@ test("with (nested json fixture) belongsTo has a hasMany association which has a
         relationships: {
           hats: {
             data: [
-              {type: "big-hat", id: 1},
-              {type: "big-hat", id: 2}
+              { type: "big-hat", id: 1 },
+              { type: "big-hat", id: 2 }
             ]
           }
         }
@@ -833,7 +827,7 @@ test("with model that has primaryKey defined in serializer ( FactoryGuy sets pri
 });
 
 test("with model that has primaryKey defined in serializer ( user sets primaryKey value )", function(assert) {
-  let cat = build('cat', {catId: 'meow1'});
+  let cat = build('cat', { catId: 'meow1' });
 
   assert.equal(cat.get('id'), 'meow1');
 });
@@ -843,54 +837,4 @@ test("with model that has primaryKey defined in serializer and is attribute ( va
 
   assert.equal(dog.get('id'), 'Dog1', 'primary key comes from dogNumber');
   assert.equal(dog.get('dog-number'), 'Dog1', 'attribute has the primary key value as well');
-});
-
-test("with links for belongsTo relationship", async function(assert) {
-  let companyLink = '/user/1/company',
-      buildJson   = build('user', {company: {links: companyLink}});
-
-  buildJson.unwrap();
-
-  let expectedJson = {
-    data: {
-      id: 1,
-      type: 'user',
-      attributes: {
-        name: 'User1',
-        style: "normal"
-      },
-      relationships: {
-        company: {
-          links: {related: companyLink}
-        }
-      }
-    }
-  };
-
-  assert.deepEqual(buildJson, expectedJson);
-});
-
-test("with links for hasMany relationship", function(assert) {
-  let propertyLink = '/user/1/properties',
-      buildJson    = build('user', {properties: {links: propertyLink}});
-
-  buildJson.unwrap();
-
-  let expectedJson = {
-    data: {
-      id: 1,
-      type: 'user',
-      attributes: {
-        name: 'User1',
-        style: "normal"
-      },
-      relationships: {
-        properties: {
-          links: {related: propertyLink}
-        }
-      }
-    }
-  };
-
-  assert.deepEqual(buildJson, expectedJson);
 });

@@ -1,12 +1,6 @@
 import Ember from 'ember';
 import { moduleFor, test } from 'ember-qunit';
-import FactoryGuy, {
-  build,
-  buildList,
-  make,
-  mockFindRecord,
-  mockCreate
-} from 'ember-data-factory-guy';
+import FactoryGuy, { build, buildList, make, mockFindRecord, mockCreate } from 'ember-data-factory-guy';
 
 import SharedCommonBehavior from './shared-common-behaviour';
 import SharedAdapterBehavior from './shared-adapter-behaviour';
@@ -60,10 +54,10 @@ test("match belongsTo with custom payloadKeyFromModelName function", function(as
     mockCreate('entry').match({entryType: entryType});
 
     FactoryGuy.store.createRecord('entry', {entryType: entryType}).save()
-              .then((entry) => {
-                assert.equal(entry.get('entryType.id'), entryType.id);
-                done();
-              });
+      .then((entry) => {
+        assert.equal(entry.get('entryType.id'), entryType.id);
+        done();
+      });
   });
 });
 
@@ -75,11 +69,11 @@ test("match hasMany with custom payloadKeyFromModelName function", function(asse
     mockCreate('entry-type').match({entries: [entry]});
 
     FactoryGuy.store.createRecord('entry-type', {entries: [entry]}).save()
-              .then((entryType) => {
-                let entries = entryType.get('entries');
-                assert.deepEqual(entries.mapBy('id'), [entry.id]);
-                done();
-              });
+      .then((entryType) => {
+        let entries = entryType.get('entries');
+        assert.deepEqual(entries.mapBy('id'), [entry.id]);
+        done();
+      });
   });
 });
 
@@ -710,41 +704,6 @@ test("with model that has primaryKey defined in serializer and is attribute ( va
   assert.equal(dog.get('dogNumber'), 'Dog1', 'attribute has the primary key value as well');
 });
 
-test("with links for belongsTo relationship", async function(assert) {
-  let companyLink = '/user/1/company',
-      buildJson   = build('user', {company: {links: companyLink}});
-
-  buildJson.unwrap();
-
-  let expectedJson = {
-    user: {
-      id: 1,
-      name: 'User1',
-      style: "normal",
-      company: {links: companyLink}
-    }
-  };
-
-  assert.deepEqual(buildJson, expectedJson);
-});
-
-test("with links for hasMany relationship", function(assert) {
-  let propertyLink = '/user/1/properties',
-      buildJson    = build('user', {properties: {links: propertyLink}});
-
-  buildJson.unwrap();
-
-  let expectedJson = {
-    user: {
-      id: 1,
-      name: 'User1',
-      style: "normal",
-      properties: {links: propertyLink}
-    }
-  };
-
-  assert.deepEqual(buildJson, expectedJson);
-});
 
 moduleFor('serializer:application', `${serializer} FactoryGuy#buildList custom`, inlineSetup(serializerType));
 

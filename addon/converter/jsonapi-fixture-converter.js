@@ -124,10 +124,6 @@ class JSONAPIFixtureConverter extends Converter {
     return {data: object};
   }
 
-  assignLinks(object) {
-    return {links: {related: object.links}};
-  }
-
 }
 
 export default JSONAPIFixtureConverter;

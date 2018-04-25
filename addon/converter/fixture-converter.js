@@ -212,14 +212,9 @@ export default class {
   extractBelongsTo(fixture, relationship, parentModelName, relationships) {
     let belongsToRecord = fixture[relationship.key],
         isEmbedded      = this.isEmbeddedRelationship(parentModelName, relationship.key),
-        relationshipKey = isEmbedded ? relationship.key : this.transformRelationshipKey(relationship),
-        isLinks         = belongsToRecord && belongsToRecord.links;
+        data            = this.extractSingleRecord(belongsToRecord, relationship, isEmbedded),
+        relationshipKey = isEmbedded ? relationship.key : this.transformRelationshipKey(relationship);
 
-    if (isLinks) {
-      return relationships[relationshipKey] = this.assignLinks(belongsToRecord);
-    }
-
-    let data = this.extractSingleRecord(belongsToRecord, relationship, isEmbedded);
     relationships[relationshipKey] = this.assignRelationship(data);
   }
 
@@ -240,12 +235,7 @@ export default class {
   extractHasMany(fixture, relationship, parentModelName, relationships) {
     let hasManyRecords  = fixture[relationship.key],
         relationshipKey = this.transformRelationshipKey(relationship),
-        isEmbedded      = this.isEmbeddedRelationship(parentModelName, relationshipKey),
-        isLinks         = hasManyRecords && hasManyRecords.links;
-
-    if (isLinks) {
-      return relationships[relationshipKey] = this.assignLinks(hasManyRecords);
-    }
+        isEmbedded      = this.isEmbeddedRelationship(parentModelName, relationshipKey);
 
     if (hasManyRecords && hasManyRecords.isProxy) {
       return this.addListProxyData(hasManyRecords, relationship, relationships, isEmbedded);
@@ -292,10 +282,6 @@ export default class {
   }
 
   assignRelationship(object) {
-    return object;
-  }
-
-  assignLinks(object) {
     return object;
   }
 

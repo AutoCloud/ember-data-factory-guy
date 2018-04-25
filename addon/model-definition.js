@@ -200,7 +200,7 @@ class ModelDefinition {
     }
     if (relationship) {
       let payload = fixture[attribute];
-      if (!payload.isProxy && !payload.links) {
+      if (!payload.isProxy) {
         fixture[attribute] = FactoryGuy.buildRaw({name: relationship.type, opts: payload, buildType});
       }
     }
