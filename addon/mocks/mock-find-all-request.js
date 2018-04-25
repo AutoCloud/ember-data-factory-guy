@@ -22,4 +22,6 @@ export default class MockFindAllRequest extends MockGetRequest {
   paramsMatch(settings) {
     return isEmptyObject(settings.data);
   }
+
+
 }
