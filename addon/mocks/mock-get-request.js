@@ -1,12 +1,12 @@
 import Ember from 'ember';
 import FactoryGuy from '../factory-guy';
 import Model from 'ember-data/model';
-import MockTypedRequest from './mock-typed-request';
+import MockRequest from './mock-request';
 import {toParams, isEquivalent, isEmptyObject, isPartOf} from '../utils/helper-functions';
 
 const assign = Ember.assign || Ember.merge;
 
-class MockGetRequest extends MockTypedRequest {
+class MockGetRequest extends MockRequest {
 
   constructor(modelName, requestType, defaultResponse) {
     super(modelName, requestType);

@@ -1,11 +1,11 @@
 import Ember from 'ember';
 import FactoryGuy from '../factory-guy';
-import MockTypedRequest from './mock-typed-request';
+import MockRequest from './mock-request';
 import AttributeMatcher from './attribute-matcher';
 
 const {isPresent} = Ember;
 
-export default class MockCreateRequest extends AttributeMatcher(MockTypedRequest) {
+export default class MockCreateRequest extends AttributeMatcher(MockRequest) {
 
   constructor(modelName, {model} = {}) {
     super(modelName, 'createRecord');

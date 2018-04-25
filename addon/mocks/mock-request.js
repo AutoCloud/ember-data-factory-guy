@@ -5,7 +5,10 @@ import RequestManager from './request-manager';
 
 export default class {
 
-  constructor() {
+  constructor(modelName, requestType) {
+    this.modelName = modelName;
+    this.requestType = requestType;
+    this.fixtureBuilder = FactoryGuy.fixtureBuilder(this.modelName);
     this.status = 200;
     this.responseHeaders = {};
     this.responseJson = null;
@@ -15,8 +18,8 @@ export default class {
     this.timesCalled = 0;
   }
 
-  //  with(options={}) {
-  //  }
+//  with(options={}) {
+//  }
 
   /**
    * Set the adapter options that this mockCreate will be using
@@ -30,18 +33,45 @@ export default class {
   }
 
   /**
+   Used by getUrl to => this.get('id')
+
+   MockGetRequest overrides this since those mocks have a payload with the id
+
+   For mockDelete: If the id is null the url will not include the id, and
+   can therefore be used to match any delete for this modelName
    */
-  get() {
+  get(...args) {
+    if (args[0] === 'id') {
+      return this.id;
+    }
   }
 
   /**
+   * Using adapterOptions for snapshot in GET requests
+   *
    * @returns {String}
    */
   getUrl() {
+    return FactoryGuy.buildURL(
+      this.modelName,
+      this.get('id'),
+      this.makeFakeSnapshot(),
+      this.requestType,
+      this.queryParams
+    );
+  }
+
+  /**
+   * Create fake snaphot with adapterOptions and record
+   *
+   * @returns {{adapterOptions: (*|Object), record: (*|DS.Model)}}
+   */
+  makeFakeSnapshot() {
+    return {adapterOptions: this.adapterOptions, record: this.model};
   }
 
   getType() {
-    return 'GET';
+    return "GET";
   }
 
   returns(/*options = {}*/) {
