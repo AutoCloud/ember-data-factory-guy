@@ -181,6 +181,7 @@ class ModelDefinition {
     }
 
     if (this.isModelAFragment()) {
+
       delete fixture.id;
     }
     delete fixture._generatedId;
@@ -334,7 +335,7 @@ class ModelDefinition {
     delete config.sequences;
     for (let sequenceName in this.sequences) {
       let sequenceFn = this.sequences[sequenceName];
-
+//      console.log('sequenceFn',sequenceFn, Ember.typeOf(sequenceFn));
       if (Ember.typeOf(sequenceFn) !== 'function') {
         throw new Error(
           `Problem with [${sequenceName}] sequence definition.
