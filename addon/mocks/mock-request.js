@@ -3,6 +3,8 @@ import { isEmptyObject } from '../utils/helper-functions';
 import FactoryGuy from '../factory-guy';
 import RequestManager from './request-manager';
 
+const assign = Ember.assign || Ember.merge;
+
 export default class {
 
   constructor(modelName, requestType) {
@@ -78,7 +80,7 @@ export default class {
   }
 
   addResponseHeaders(headers) {
-    Object.assign(this.responseHeaders, headers);
+    assign(this.responseHeaders, headers);
   }
 
   succeeds(opts = {}) {
