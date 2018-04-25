@@ -17,6 +17,11 @@ class MockGetRequest extends MockRequest {
     this.queryParams = {};
   }
 
+  adapterOptions(options) {
+    this._adapterOptions = options;
+    return this;
+  }
+
   /**
    Used for inspecting the response that this mock will generate
 
@@ -59,11 +64,11 @@ class MockGetRequest extends MockRequest {
 
   returns(options = {}) {
     let responseKey = this.validateReturnsOptions(options);
-    this.setReturns(responseKey, options);
+    this._setReturns(responseKey, options);
     return this;
   }
 
-  setReturns(responseKey, options) {
+  _setReturns(responseKey, options) {
     let json, model, models, modelName = this.modelName;
 
     switch (responseKey) {
